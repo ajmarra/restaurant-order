@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderdeployment
+spec:
+  selector:
+    matchLabels:
+      app: orderservice
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      containers:
+      - image: us.icr.io/ajmarra/orderservice:1.0
+        name: order
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9001
+        
+        env:
+          - name: menu.endpoint
+            valueFrom:
+              configMapKeyRef:
+                name: ordercm
+                key: menu.endpoint
+                
+      restartPolicy: Always
